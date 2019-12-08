@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+<head>
+    <meta charset="UTF-8">
+    <title>天天习题-用户中心</title>
+    <link rel="stylesheet" type="text/css" href="{% static "css/reset.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/main.css" %}">
+    <script type="text/javascript" src="{% static "js/jquery-1.12.4.min.js" %}"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#publish_questions").click(function () {
+                alert("请联系管理员！");
+            });
+
+            $("#my_favorite").click(function () {
+                uc_switch($(".uc_right_part_field_my_favorite"));
+            });
+
+            $("#my_questions").click(function () {
+                uc_switch($(".uc_right_part_field_my_question"));
+            });
+
+            $("#password_change").click(function () {
+                uc_switch($(".uc_right_part_password_change"));
+            });
+
+            $("#edit_user_info").click(function () {
+                uc_switch($(".uc_right_part_user_info_change"));
+            });
+
+            $("#my_information").click(function () {
+                uc_switch($(".uc_right_part_field_my_information"));
+            });
+
+            function uc_switch($click) {
+                $click.parent(".uc_total_container_right").addClass("chosen").siblings(".uc_total_container_right").removeClass("chosen");
+            }
+
+            $(".uc_right_part_doc_my_favorite").delegate("input", "click", function () {
+                let cancel_favorite_id = $(this).parent("div").attr("id");
+                console.log(cancel_favorite_id);
+                $.get("/user/cancel_favorite/" + cancel_favorite_id, function (data) {
+                });
+                $(this).parent("div").parent("li").hide();
+            });
+
+        });
+    </script>
+</head>
+<body>
+
+
+<div class="total_container">
+    <div class="navigation_bar_container">
+        <a href="/index" class="navigation_bar_home_page">首页</a>
+        <ul class="navigation_login_register">
+            {% if user.is_authenticated %}
+                <li class="navigation_exit"><a href="/user/login_out">退出</a></li>
+                <li class="navigation_username"><a href="/user/user_center">欢迎您&nbsp;,&nbsp;{{ user.username }}</a></li>
+            {% else %}
+                <li class="navigation_register"><a href="/user/register">注册</a></li>
+                <li class="navigation_login"><a href="/user/login">登陆</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <div class="uc_total_container_left">
+        <div class="uc_user_display_container">
+            <div class="uc_user_info">
+                <div class="uc_head_portrait">
+                    <img src="{% static "images/head_portrait.jpg" %}" alt="头像">
+                </div>
+                <div class="uc_username">
+                    <h3>用户名</h3>
+                </div>
+            </div>
+        </div>
+        <div class="uc_question_manage">
+            <div class="uc_question_manage_title">
+                <img src="{% static "images/uc_question_manage_icon.png" %}" alt="uc_question_manage">
+                <h2>试题管理</h2>
+            </div>
+            <ul class="uc_question_manage_list">
+                <li>
+                    <div class="uc_question_manage_list_dec"></div>
+                    <a id="publish_questions"><h3>发布试题</h3></a>
+                </li>
+                <li>
+                    <div class="uc_question_manage_list_dec"></div>
+                    <a id="my_questions"><h3>我的试题</h3></a>
+                </li>
+                <li>
+                    <div class="uc_question_manage_list_dec"></div>
+                    <a id="my_favorite"><h3>已收藏的试题</h3></a>
+                </li>
+            </ul>
+        </div>
+        <div class="uc_user_info_manage">
+            <div class="uc_user_info_manage_title">
+                <img src="{% static "images/uc_user_info_manage_icon.png" %}" alt="uc_question_manage">
+                <h2>用户信息管理</h2>
+            </div>
+            <ul class="uc_user_info_manage_list">
+                <li>
+                    <div class="uc_user_info_manage_list_dec"></div>
+                    <a id="edit_user_info"><h3>修改资料</h3></a>
+                </li>
+                <li>
+                    <div class="uc_user_info_manage_list_dec"></div>
+                    <a id="password_change"><h3>修改密码</h3></a>
+                </li>
+                <li>
+                    <div class="uc_user_info_manage_list_dec"></div>
+                    <a id="my_information"><h3>我的消息</h3></a>
+                </li>
+            </ul>
+        </div>
+        <div class="uc_manage_bottom_dec"></div>
+    </div>
+    <div class="uc_total_container_right">
+        <div class="uc_right_part_title">
+            已收藏的试题
+        </div>
+        <ul class="uc_right_part_field_my_favorite">
+            <li>序号</li>
+            <li>试题内容</li>
+            <li>操作</li>
+        </ul>
+        <ul class="uc_right_part_doc_my_favorite">
+            {% for user_favorite_question in user_favorite_questions %}
+                <li>
+                    <div>{{ forloop.counter }}</div>
+                    <div>{{ user_favorite_question.content }}</div>
+                    <div id="{{ user_favorite_question.id }}">
+                        <input type="button" value="取消收藏" name="collect_cancel">
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="uc_total_container_right">
+        <div class="uc_right_part_title">
+            我的试题
+        </div>
+        <ul class="uc_right_part_field_my_question">
+            <li>序号</li>
+            <li>试题内容</li>
+            <li>知识点</li>
+            <li>类型</li>
+            <li>是否入库</li>
+            <li>添加时间</li>
+            <li>操作</li>
+        </ul>
+        <ul class="uc_right_part_doc_my_question">
+            <!--<li>1</li>
+            <li>在第十一届全运会上，获得奖牌榜第二名的解放军代表队获得金牌49枚，银牌39枚，金银牌共获得多少枚？</li>
+            <li>基本运算</li>
+            <li>解答题</li>
+            <li>是</li>
+            <li>2019-3-20</li>
+            <li>
+                <input type="button" value="取消收藏" name="collect_cancel">
+            </li>-->
+        </ul>
+    </div>
+
+    <div class="uc_total_container_right">
+        <div class="uc_right_part_title">
+            修改资料
+        </div>
+        <div class="uc_right_part_user_info_change">
+            <from method="post">
+                {% csrf_token %}
+                <ul>
+                    <li>
+                        <h3>用户名&nbsp;:</h3>
+                        <input type="text">
+                    </li>
+                    <li>
+                        <h3>身份&nbsp;:</h3>
+                        <input type="text">
+                    </li>
+                    <li>
+                        <h3>年级&nbsp;:</h3>
+                        <input type="text">
+                    </li>
+                    <li>
+                        <input type="button" value="确认修改">
+                    </li>
+                </ul>
+            </from>
+        </div>
+    </div>
+
+    <div class="uc_total_container_right">
+        <div class="uc_right_part_title">
+            修改密码
+        </div>
+        <div class="uc_right_part_password_change">
+            <form method="post" action="/user/change_password">
+                {% csrf_token %}
+                <ul>
+                    <li>
+                        <h3>原密码&nbsp;:</h3>
+                        <input type="text" name="original_password">
+                    </li>
+                    <li>
+                        <h3>新密码&nbsp;:</h3>
+                        <input type="text" name="new_password">
+                    </li>
+                    <li>
+                        <h3>新密码确认&nbsp;:</h3>
+                        <input type="text" name="new_password_confirm">
+                    </li>
+                    <li>
+                        <input type="submit" value="确认修改">
+                    </li>
+                </ul>
+            </form>
+        </div>
+    </div>
+
+    <div class="uc_total_container_right chosen">
+        <div class="uc_right_part_title">
+            我的消息
+        </div>
+        <ul class="uc_right_part_field_my_information">
+            <li>序号</li>
+            <li>标题</li>
+            <li>内容</li>
+            <li>发送人</li>
+            <li>时间</li>
+        </ul>
+        <ul class="uc_right_part_doc_my_information">
+            <!--<li>1</li>
+            <li>第一条消息</li>
+            <li>hello world!hello world!hello world!hello world!</li>
+            <li>bo</li>
+            <li>2019-3-21</li>-->
+        </ul>
+    </div>
+
+</div>
+</body>
+</html>

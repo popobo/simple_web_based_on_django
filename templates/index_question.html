@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+<head>
+    <meta charset="UTF-8">
+    <title>天天习题-习题检索</title>
+    <link rel="stylesheet" type="text/css" href="{% static "css/reset.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/main.css" %}">
+    <script type="text/javascript" src="{% static "js/jquery-1.12.4.min.js" %}"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#iq_elementary").click(function () {
+                $("#iq_grade_select_list").html("<li><a href=\"#\" class=\"active\">&nbsp;一年级&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;二年级&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;三年级&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;四年级&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;五年级&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;六年级&nbsp;</a></li>");
+                $("#iq_subject_select_list").html("<li><a href=\"#\" class=\"active\">&nbsp;语文&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;数学&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;英语&nbsp;</a></li>");
+            });
+            $("#iq_junior").click(function () {
+                $("#iq_grade_select_list").html("<li><a href=\"#\" class=\"active\">&nbsp;一年级&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;二年级&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;三年级&nbsp;</a></li>");
+                $("#iq_subject_select_list").html("<li><a href=\"#\" class=\"active\">&nbsp;语文&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;数学&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;英语&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;物理&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;化学&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;生物&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;地理&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;历史&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;思品&nbsp;</a></li>").children("li").css({"width": "10%"});
+            });
+            $("#iq_senior").click(function () {
+                $("#iq_grade_select_list").html("<li><a href=\"#\" class=\"active\">&nbsp;一年级&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;二年级&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;三年级&nbsp;</a></li>");
+                $("#iq_subject_select_list").html("<li><a href=\"#\" class=\"active\">&nbsp;语文&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;数学&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;英语&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;物理&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;化学&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;生物&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;地理&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;历史&nbsp;</a></li>" +
+                    "<li><a href=\"#\">&nbsp;政治&nbsp;</a></li>").children("li").css({"width": "10%"});
+
+            });
+
+            $(".iq_search_container_list li ul").delegate("a", "click", function () {
+                $(this).addClass("active").parent("li").siblings("li").children("a").removeClass("active");
+                $(".iq_workbook_select_title").html("----习题册----");
+            });
+
+            $iq_workbook_select_button = $(".iq_workbook_select_button");
+            $iq_workbook_select_options = $(".iq_workbook_select_options");
+            $iq_workbook_select_options_container = $(".iq_workbook_select_options_container")
+            $iq_workbook_select_button.click(function () {
+                let period = $("#iq_period_select_list").find(".active").parent("li").index();
+                let grade = $("#iq_grade_select_list").find(".active").parent("li").index();
+                if (period === 1) {
+                    grade += 6;
+                } else if (period === 2) {
+                    grade += 9;
+                }
+                let type = $("#iq_type_select_list").find(".active").parent("li").index();
+                let method = $("#iq_method_select_list").find(".active").parent("li").index();
+                let subject = $("#iq_subject_select_list").find(".active").parent("li").index();
+                let term = $("#iq_term_select_list").find(".active").parent("li").index();
+
+
+                $.get("/workbook/" + grade + "/" + subject + "/" + term, function (data) {
+                    let result = data["workbooks"];
+                    $iq_workbook_select_options_container.empty();
+                    $.each(result, function (index, item) {
+                        let workbook_name = item[1];
+                        let option_str = "<li class=\"iq_workbook_select_options\"><a href=\"#\">" + workbook_name + "</a></li>";
+                        $iq_workbook_select_options_container.append(option_str);
+                    });
+                });
+
+
+                if ($iq_workbook_select_options_container.css("display") === "none") {
+                    $iq_workbook_select_options_container.show();
+                    $iq_workbook_select_button.html("&Delta;");
+                } else {
+                    $iq_workbook_select_options_container.hide();
+                    $iq_workbook_select_button.html("&nabla;");
+                }
+            });
+
+
+            $iq_workbook_select_options_container.delegate("a", "click", function () {
+                let workbook_name = $(this).html();
+                $(".iq_workbook_select_title").html($(this).html());
+                $iq_workbook_select_options_container.hide();
+                $iq_workbook_select_button.html("&nabla;");
+                event.stopPropagation();
+
+                $.get("/chapter/" + workbook_name, function (data) {
+                    let result = data["chapters"];
+                    $(".iq_chapter_bar").empty();
+                    $.each(result, function (index, item) {
+                        let chapter_name = item[1];
+                        if (chapter_name.length > 14) {
+                            chapter_name = chapter_name.substring(0, 14);
+                        }
+                        let option_str = "<li><div class=\"iq_chapter_bar_dec\"></div><a href=\"#\">1&nbsp;" + chapter_name + "</a></li>";
+                        $(".iq_chapter_bar").append(option_str);
+                    });
+                });
+            });
+
+            {# 向服务器发送数据, 根据workbook_name与chapter_index搜索题目, 并显示到页面上 #}
+            $(".iq_chapter_bar").delegate("a", "click", function () {
+                let workbook_name = $(".iq_workbook_select_title").html();
+                let chapter_index = $(this).parent().index();
+                $(".iq_question_show").empty();
+                $.get("/questions/" + workbook_name + "/" + chapter_index, function (data) {
+                    let result = data["questions"];
+                    let result_user_favorite = data["user_favorites"];
+                    $.each(result, function (index, item) {
+                        let question_id = item[0];
+                        let question_content = item[1];
+                        let list_str = '' +
+                            '<li id="' + question_id + '">' +
+                            '<div class="iq_question_show_1">' + question_content + '</div>' +
+                            '<div class="iq_question_show_2">' +
+                            '<a href="javascript:void(0);" id="iq_question_collect"><img src="{% static "images/before_collect.png" %}" alt="收藏icon">收藏</a>' +
+                            '<a href="javascript:void(0);" id="iq_question_show_answer"><img src="{% static "images/show_detail.png" %}" alt="解析icon">查看解析</a>' +
+                            '</div>' +
+                            '</li>';
+                        $.each(result_user_favorite, function (index, item) {
+                            if (question_id === item[1]) {
+                                list_str = '' +
+                                    '<li id="' + question_id + '">' +
+                                    '<div class="iq_question_show_1">' + question_content + '</div>' +
+                                    '<div class="iq_question_show_2">' +
+                                    '<a href="javascript:void(0);" id="iq_question_collect"><img src="{% static "images/after_collect.png" %}" alt="收藏icon">已收藏</a>' +
+                                    '<a href="javascript:void(0);" id="iq_question_show_answer"><img src="{% static "images/show_detail.png" %}" alt="解析icon">查看解析</a>' +
+                                    '</div>' +
+                                    '</li>';
+                            }
+                        });
+                        console.log(list_str);
+                        $(".iq_question_show").append(list_str);
+                    });
+                });
+            });
+
+            {# 查看解析的处理 #}
+            $(".iq_question_show").delegate("#iq_question_show_answer", "click", function () {
+                let question_id = $(this).parent().parent("li").attr("id");
+                $.get("/question_answer/" + question_id, function (data) {
+                    let result = data["question_answer"];
+                    $.each(result, function (index, item) {
+                        let question_answer = item[1];
+                        let str = '' +
+                            '<div class="iq_question_show_1">' +
+                            's----------------------------------------------------------------------------------------------' +
+                            '解析:' + question_answer +
+                            '</div>';
+                        if ($("#" + question_id).children(".iq_question_show_1").size() === 1) {
+                            $("#" + question_id).children(".iq_question_show_1").after(str);
+                        }
+                    });
+                });
+            });
+
+            {# 收藏题目 #}
+            $(".iq_question_show").delegate("#iq_question_collect", "click", function () {
+                let question_id = $(this).parent().parent("li").attr("id");
+                $(this).html('<img src="{% static "images/after_collect.png" %}" alt=\"收藏icon\">已收藏');
+                $.get("/question_collect/" + question_id, function () {
+                });
+            });
+
+        });
+    </script>
+    <style type="text/css">
+        .iq_search_container_list > li .iq_workbook_select {
+            float: left;
+            width: 300px;
+            height: 25px;
+            margin: 7px 0 0 20px;
+            text-align: center;
+            background-color: #b8faff;
+            border: 1px solid #000000;
+        }
+
+        .iq_search_container_list > li .iq_workbook_select .iq_workbook_select_title {
+            width: 300px;
+            height: 25px;
+            line-height: 25px;
+            text-align: center;
+
+        }
+
+        .iq_search_container_list > li .iq_workbook_select .iq_workbook_select_options {
+            width: 300px;
+            height: 25px;
+            line-height: 25px;
+            text-align: center;
+            margin: 0 0 0 -1px;
+            background-color: white;
+            border-bottom: 1px solid #000000;
+            border-left: 1px solid #000000;
+            border-right: 1px solid #000000;
+            z-index: 9999;
+            position: relative;
+        }
+
+        .iq_workbook_select_button {
+            display: block;
+            height: 25px;
+            margin: 7px 0 0 0;
+            line-height: 25px;
+            font-size: 18px;
+            float: left;
+            width: 25px;
+            text-align: center;
+            border-bottom: 1px solid #000000;
+            border-top: 1px solid #000000;
+            border-right: 1px solid #000000;
+        }
+
+        .iq_workbook_select_button:hover {
+            cursor: pointer;
+        }
+
+        .iq_workbook_select_options_container {
+            display: none;
+        }
+
+
+    </style>
+</head>
+<body>
+
+
+<div class="total_container">
+    <div class="navigation_bar_container">
+        <a href="/index" class="navigation_bar_home_page">首页</a>
+        <ul class="navigation_login_register">
+            {% if user.is_authenticated %}
+                <li class="navigation_exit"><a href="/user/login_out">退出</a></li>
+                <li class="navigation_username"><a href="/user/user_center">欢迎您&nbsp;,&nbsp;{{ user.username }}</a></li>
+            {% else %}
+                <li class="navigation_register"><a href="/user/register">注册</a></li>
+                <li class="navigation_login"><a href="/user/login">登陆</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="logo_container">
+        <div class="logo_container_inner">
+            <img src="{% static "images/logo.png" %}" alt="logo" class="logo_img">
+            <!--<img src="images/Qr_code.jpg" class="Qr_code_img">-->
+        </div>
+    </div>
+    <div class="iq_guide_words_container">
+        <div class="iq_guide_words_container_inner">
+            <span>当前 : 习题检索</span>
+        </div>
+    </div>
+    <div class="iq_search_container">
+        <ul class="iq_search_container_list">
+            <li>
+                <div class="iq_search_container_list_title">
+                    学段 :
+                </div>
+                <ul id="iq_period_select_list">
+                    <li><a href="javascript:void(0);" class="active" id="iq_elementary">&nbsp;小学&nbsp;</a></li>
+                    <li><a href="javascript:void(0);" id="iq_junior">&nbsp;初中&nbsp;</a></li>
+                    <li><a href="javascript:void(0);" id="iq_senior">&nbsp;高中&nbsp;</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="iq_search_container_list_title">
+                    学科 :
+                </div>
+                <ul id="iq_subject_select_list">
+                    <li><a href="javascript:void(0);" class="active">&nbsp;语文&nbsp;</a></li>
+                    <li><a href="javascript:void(0);">&nbsp;数学&nbsp;</a></li>
+                    <li><a href="javascript:void(0);">&nbsp;英语&nbsp;</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="iq_search_container_list_title">
+                    年级 :
+                </div>
+                <ul id="iq_grade_select_list">
+                    <li><a href="javascript:void(0);" class="active">&nbsp;一年级&nbsp;</a></li>
+                    <li><a href="javascript:void(0);">&nbsp;二年级&nbsp;</a></li>
+                    <li><a href="javascript:void(0);">&nbsp;三年级&nbsp;</a></li>
+                    <li><a href="javascript:void(0);">&nbsp;四年级&nbsp;</a></li>
+                    <li><a href="javascript:void(0);">&nbsp;五年级&nbsp;</a></li>
+                    <li><a href="javascript:void(0);">&nbsp;六年级&nbsp;</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="iq_search_container_list_title">
+                    学期 :
+                </div>
+                <ul id="iq_term_select_list">
+                    <li><a href="javascript:void(0);" class="active">&nbsp;全部&nbsp;</a></li>
+                    <li><a href="javascript:void(0);">&nbsp;上学期&nbsp;</a></li>
+                    <li><a href="javascript:void(0);">&nbsp;下学期&nbsp;</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="iq_search_container_list_title">
+                    题型&nbsp;:
+                </div>
+                <ul id="iq_type_select_list">
+                    <li><a href="javascript:void(0);" class="active">&nbsp;全部&nbsp;</a></li>
+                    <li><a href="javascript:void(0);">&nbsp;单选题&nbsp;</a></li>
+                    <li><a href="javascript:void(0);">&nbsp;多选题&nbsp;</a></li>
+                    <li><a href="javascript:void(0);">&nbsp;填空题&nbsp;</a></li>
+                    <li><a href="javascript:void(0);">&nbsp;判断题&nbsp;</a></li>
+                    <li><a href="javascript:void(0);">&nbsp;操作题&nbsp;</a></li>
+                    <li><a href="javascript:void(0);">&nbsp;计算题&nbsp;</a></li>
+                    <li><a href="javascript:void(0);">&nbsp;解答题&nbsp;</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="iq_search_container_list_title">
+                    检索方式&nbsp;:
+                </div>
+                <ul id="iq_method_select_list">
+                    <li><a href="javascript:void(0);" class="active">&nbsp;按章节&nbsp;</a></li>
+                    <li><a href="javascript:void(0);">&nbsp;按知识点&nbsp;</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="iq_search_container_list_title">
+                    习题册&nbsp;:
+                </div>
+                <ul class="iq_workbook_select">
+                    <li class="iq_workbook_select_title">----习题册----</li>
+                    <ul class="iq_workbook_select_options_container">
+                    </ul>
+                </ul>
+                <a class="iq_workbook_select_button">&nabla;</a>
+            </li>
+        </ul>
+    </div>
+    <div class="iq_main_content">
+        <ul class="iq_chapter_bar">
+            <li>
+                <div class="iq_chapter_bar_dec"></div>
+                <a href="javascript:void(0);">章节列表</a>
+            </li>
+        </ul>
+        <ul class="iq_question_show">
+            <li>
+                <div class="iq_question_show_1">
+                    试题列表
+                </div>
+                <div class="iq_question_show_2">
+                    <a href="javascript:void(0);" id="iq_question_collect"><img
+                            src="{% static "images/before_collect.png" %}" alt="收藏icon">收藏</a>
+                    <a href="javascript:void(0);" id="iq_question_show_answer"><img
+                            src="{% static "images/show_detail.png" %}" alt="解析icon">查看解析</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="footer_container">
+        <footer>
+            版权说明等内容
+        </footer>
+    </div>
+</div>
+
+</body>
+</html>

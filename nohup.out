@@ -1,0 +1,102 @@
+/home/bo/.virtualenvs/Django/lib/python3.5/site-packages/celery/apps/worker.py:161: CDeprecationWarning: 
+Starting from version 3.2 Celery will refuse to accept pickle by default.
+
+The pickle serializer is a security concern as it may give attackers
+the ability to execute any command.  It's important to secure
+your broker from unauthorized access when using pickle, so we think
+that enabling pickle should require a deliberate action and not be
+the default choice.
+
+If you depend on pickle then you should set a setting to disable this
+warning and to be sure that everything will continue working
+when you upgrade to Celery 3.2::
+
+    CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml']
+
+You must only enable the serializers that you will actually use.
+
+
+  warnings.warn(CDeprecationWarning(W_PICKLE_DEPRECATED))
+
+[2019-05-15 10:32:51,179: WARNING/MainProcess] /home/bo/.virtualenvs/Django/lib/python3.5/site-packages/celery/apps/worker.py:161: CDeprecationWarning: 
+Starting from version 3.2 Celery will refuse to accept pickle by default.
+
+The pickle serializer is a security concern as it may give attackers
+the ability to execute any command.  It's important to secure
+your broker from unauthorized access when using pickle, so we think
+that enabling pickle should require a deliberate action and not be
+the default choice.
+
+If you depend on pickle then you should set a setting to disable this
+warning and to be sure that everything will continue working
+when you upgrade to Celery 3.2::
+
+    CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml']
+
+You must only enable the serializers that you will actually use.
+
+
+  warnings.warn(CDeprecationWarning(W_PICKLE_DEPRECATED))
+
+[2019-05-15 10:32:51,210: ERROR/MainProcess] consumer: Cannot connect to redis://127.0.0.1:6379/8: .
+Trying again in 2.00 seconds...
+
+[2019-05-15 10:32:53,215: ERROR/MainProcess] consumer: Cannot connect to redis://127.0.0.1:6379/8: .
+Trying again in 4.00 seconds...
+
+[2019-05-15 10:32:57,220: ERROR/MainProcess] consumer: Cannot connect to redis://127.0.0.1:6379/8: .
+Trying again in 6.00 seconds...
+
+
+worker: Hitting Ctrl+C again will terminate all running tasks!
+
+worker: Warm shutdown (MainProcess)
+
+worker: Cold shutdown (MainProcess)
+[2019-05-15 10:33:03,664: WARNING/MainProcess] Error in atexit._run_exitfuncs:
+[2019-05-15 10:33:03,665: WARNING/MainProcess] Traceback (most recent call last):
+[2019-05-15 10:33:03,665: WARNING/MainProcess] File "/usr/lib/python3.5/multiprocessing/util.py", line 254, in _run_finalizers
+[2019-05-15 10:33:03,684: WARNING/MainProcess] finalizer()
+[2019-05-15 10:33:03,684: WARNING/MainProcess] File "/usr/lib/python3.5/multiprocessing/util.py", line 186, in __call__
+[2019-05-15 10:33:03,685: WARNING/MainProcess] res = self._callback(*self._args, **self._kwargs)
+[2019-05-15 10:33:03,685: WARNING/MainProcess] File "/home/bo/.virtualenvs/Django/lib/python3.5/site-packages/billiard/pool.py", line 1572, in _terminate_pool
+[2019-05-15 10:33:03,704: WARNING/MainProcess] cls._help_stuff_finish(*help_stuff_finish_args)
+[2019-05-15 10:33:03,705: WARNING/MainProcess] File "/home/bo/.virtualenvs/Django/lib/python3.5/site-packages/celery/concurrency/asynpool.py", line 1259, in _help_stuff_finish
+[2019-05-15 10:33:03,719: WARNING/MainProcess] readable, _, again = _select(inqR, timeout=0.5)
+[2019-05-15 10:33:03,719: WARNING/MainProcess] File "/home/bo/.virtualenvs/Django/lib/python3.5/site-packages/celery/concurrency/asynpool.py", line 141, in _select
+[2019-05-15 10:33:03,719: WARNING/MainProcess] r, w, e = select.select(readers, writers, err, timeout)
+[2019-05-15 10:33:03,719: WARNING/MainProcess] File "/home/bo/.virtualenvs/Django/lib/python3.5/site-packages/celery/apps/worker.py", line 293, in _handle_request
+[2019-05-15 10:33:03,719: WARNING/MainProcess] raise exc()
+[2019-05-15 10:33:03,720: WARNING/MainProcess] celery.exceptions
+[2019-05-15 10:33:03,720: WARNING/MainProcess] .
+[2019-05-15 10:33:03,720: WARNING/MainProcess] WorkerTerminate
+ 
+ -------------- celery@bo-ubuntu v3.1.23 (Cipater)
+---- **** ----- 
+--- * ***  * -- Linux-4.15.0-47-generic-x86_64-with-Ubuntu-16.04-xenial
+-- * - **** --- 
+- ** ---------- [config]
+- ** ---------- .> app:         celery_tasks.tasks:0x7fdeac208a58
+- ** ---------- .> transport:   redis://127.0.0.1:6379/8
+- ** ---------- .> results:     disabled://
+- *** --- * --- .> concurrency: 1 (prefork)
+-- ******* ---- 
+--- ***** ----- [queues]
+ -------------- .> celery           exchange=celery(direct) key=celery
+                
+
+[tasks]
+  . celery_tasks.tasks.send_register_active_email
+
+[15/May/2019 10:53:38]"GET /index HTTP/1.1" 200 4879
+[15/May/2019 10:53:38]"GET /static/css/reset.css HTTP/1.1" 200 664
+[15/May/2019 10:53:38]"GET /static/images/logo.png HTTP/1.1" 200 15870
+[15/May/2019 10:53:38]"GET /static/css/main.css HTTP/1.1" 200 22547
+[15/May/2019 10:53:39]"GET /favicon.ico HTTP/1.1" 404 3937
+Performing system checks...
+
+System check identified no issues (0 silenced).
+May 15, 2019 - 10:51:28
+Django version 1.8.2, using settings 'FifthDemo.settings'
+Starting development server at http://127.0.0.1:8888/
+Quit the server with CONTROL-C.

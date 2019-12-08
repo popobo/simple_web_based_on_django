@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+<head>
+    <meta charset="UTF-8">
+    <title>天天习题-登录界面</title>
+    <link rel="stylesheet" type="text/css" href="{% static "css/reset.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/main.css" %}">
+</head>
+<body>
+<div class="login_total_content">
+    <div class="login_logo">
+        <img src="{% static "images/logo.png" %}" alt="logo">
+    </div>
+    <div class="login_form_container">
+        <div class="login_form_decoration">
+            <img src="{% static "images/decoration_books.png" %}" alt="decoration">
+        </div>
+        <div class="login_form">
+            <form method="post">
+                {% csrf_token %}
+                <ul class="login_form_list">
+                    <li class="login_form_title">
+                        <div class="login_form_title_1">
+                            用户登陆
+                        </div>
+                        <div class="login_form_title_3">
+                            <a href="">立即注册</a>
+                        </div>
+                        <div class="login_form_title_2">
+                            &gt;
+                        </div>
+                    </li>
+                    <li>
+                        <input type="text" name="username" placeholder="请输入用户名" value={{ username }}>
+                    </li>
+                    <li>
+                        <input type="password" name="password" placeholder="请输入密码">
+                    </li>
+                    <li>
+                        <input type="checkbox" name="remember" {{ checked }}>
+                        <span>记住用户名和密码</span>
+                        <a href="javascript:void(0);">忘记密码</a>
+                    </li>
+                    <li>
+                        <input type="submit" name="login_button" value="登陆">
+                    </li>
+                </ul>
+            </form>
+        </div>
+        <div class="login_form_decoration">
+            <img src="{% static "images/decoration_books.png" %}" alt="decoration">
+        </div>
+    </div>
+    <div class="footer_container">
+        <footer>
+            版权说明等内容
+            {{ error_message }}
+            {{ username }}
+            {{ password }}
+        </footer>
+    </div>
+</div>
+</body>
+</html>

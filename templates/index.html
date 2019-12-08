@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+<head>
+    <meta charset="UTF-8">
+    <title>天天习题-首页</title>
+    <link rel="stylesheet" type="text/css" href="{% static "css/reset.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/main.css" %}">
+</head>
+<body>
+
+
+<div class="total_container">
+    <div class="navigation_bar_container">
+        <a href="/index" class="navigation_bar_home_page">首页</a>
+        <ul class="navigation_login_register">
+            {% if user.is_authenticated %}
+            <li class="navigation_exit"><a href="/user/login_out">退出</a></li>
+            <li class="navigation_username"><a href="/user/user_center">欢迎您&nbsp;,&nbsp;{{ user.username }}</a></li>
+            {% else %}
+            <li class="navigation_register"><a href="/user/register">注册</a></li>
+            <li class="navigation_login"><a href="/user/login">登陆</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="logo_container">
+        <div class="logo_container_inner">
+            <img src="{% static "images/logo.png" %}" alt="logo" class="logo_img">
+            <!--<img src="images/Qr_code.jpg" class="Qr_code_img">-->
+        </div>
+    </div>
+
+
+    <div class="guide_words_container">
+        <div class="guide_words_container_inner">
+            学科分类
+        </div>
+    </div>
+
+
+    <div class="types_list_container">
+        <ul class="types_list">
+            <li>
+                <div class="types_list_big_title">
+                    高中
+                </div>
+                <ul class="types_list_subjects_list">
+                    <li><a href="javascript:void(0);">数学</a></li>
+                    <li><a href="javascript:void(0);">语文</a></li>
+                    <li><a href="javascript:void(0);">英语</a></li>
+                    <li><a href="javascript:void(0);">物理</a></li>
+                    <li><a href="javascript:void(0);">化学</a></li>
+                    <li><a href="javascript:void(0);">生物</a></li>
+                    <li><a href="javascript:void(0);">地理</a></li>
+                    <li><a href="javascript:void(0);">历史</a></li>
+                    <li><a href="javascript:void(0);">政治</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="types_list_big_title">
+                    初中
+                </div>
+                <ul class="types_list_subjects_list">
+                    <li><a href="javascript:void(0);">数学</a></li>
+                    <li><a href="javascript:void(0);">语文</a></li>
+                    <li><a href="javascript:void(0);">英语</a></li>
+                    <li><a href="javascript:void(0);">物理</a></li>
+                    <li><a href="javascript:void(0);">化学</a></li>
+                    <li><a href="javascript:void(0);">生物</a></li>
+                    <li><a href="javascript:void(0);">地理</a></li>
+                    <li><a href="javascript:void(0);">历史</a></li>
+                    <li><a href="javascript:void(0);">思品</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="types_list_big_title">
+                    小学
+                </div>
+                <!--ul.types_list_subjects_list>(li>a)*3-->
+                <ul class="types_list_subjects_list">
+                    <li><a href="javascript:void(0);">数学</a></li>
+                    <li><a href="javascript:void(0);">语文</a></li>
+                    <li><a href="javascript:void(0);">英语</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+
+    <div class="new_resource_list_container">
+        <div class="new_resource_list_title">
+            最新入库
+        </div>
+        <ul class="new_resource_list">
+            {% for lastest_question in lastest_questions %}
+                <li><span>{{ lastest_question.grade }}{{ lastest_question.subject }}</span><a href="javascript:void(0);">{{ lastest_question.content }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="choose_function_container">
+        <a href="/index_question">字段检索题目</a>
+        <a href="/index_question_image">图片识别题目</a>
+    </div>
+
+    <div class="footer_container">
+        <footer>
+            版权说明等内容
+        </footer>
+    </div>
+</div>
+</body>
+</html>

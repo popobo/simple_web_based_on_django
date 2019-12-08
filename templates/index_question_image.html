@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+<head>
+    <meta charset="UTF-8">
+    <title>天天习题-图像识别</title>
+    <link rel="stylesheet" type="text/css" href="{% static "css/reset.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/main.css" %}">
+    <script type="text/javascript" src="{% static "js/jquery-1.12.4.min.js" %}"></script>
+
+    <style type="text/css">
+        .iqi_user_upload_image_form_container {
+            width: 70%;
+            margin: 20px auto;
+        }
+
+        a[class="iqi_choose_file_a"], input[type=submit] {
+            color: #00A2D4;
+            border: 1px dashed #00A2D4;
+            border-radius: 2px;
+            height: 32px;
+            margin: 10px 0 0 3px;
+            display: inline-block;
+            line-height: 32px;
+        }
+
+        .iqi_user_upload_image_form_container_inside {
+            margin: 60px 0 0 300px;
+        }
+
+        a[class="iqi_choose_file_a"] {
+            height: 30px;
+            line-height: 30px;
+        }
+
+
+        input[id="iqi_chosen_file_path"] {
+            padding: 3px 6px 0 10px;
+            border: 1px solid #E7EAEC;
+            width: 230px;
+            height: 25px;
+            line-height: 25px;
+            border-left: 3px solid #3FB7EB;
+            background: #FAFAFB;
+            border-radius: 2px;
+        }
+
+        .iqi_user_upload_image_form_container img {
+            display: block;
+            width: 65%;
+            height: 380px;
+            margin: 0 auto;
+        }
+
+        input[type="file"] {
+            border: 0;
+            display: none;
+        }
+
+        .iqi_identify_container {
+            width: 80%;
+            margin: 30px auto;
+            height: 140px;
+        }
+
+        .iqi_identify_title {
+            width: 15%;
+            float: left;
+            text-align: center;
+            padding-top: 5px;
+            background-color: skyblue;
+        }
+
+        .iqi_identify_content {
+            width: 85%;
+            float: left;
+            height: 130px;
+            background-color: aliceblue;
+            text-indent: 10px;
+            padding-top: 5px;
+        }
+
+        #iqi_submit {
+            width: 80px;
+            display: block;
+            float: left;
+            height: 30px;
+            margin: 10px 0 0 4px;
+            background-color: #3fb7eb8c;
+            border: 0;
+            border-radius: 3px;
+        }
+
+
+    </style>
+    <script type="text/javascript">
+        $(function () {
+            $("#iqi_choose_file_a").click(function () {
+                $("input[type='file']").trigger("click");
+            });
+            $("#iqi_chosen_file_path").click(function () {
+                $("input[type='file']").trigger("click");
+            });
+            $("input[type='file']").change(function (e) {
+                $("#iqi_chosen_file_path").val($(this).val());
+                let _URL = window.URL || window.webkitURL;
+                let file, img;
+                img = new Image();
+                if ((file = this.files[0])) {
+                    img.onload = function () {
+                        $("#user_question_image_show").attr("src", this.src);
+                        console.log($(this).val());
+                    };
+                    img.src = _URL.createObjectURL(file);
+                }
+            });
+            $("#iqi_submit").click(function () {
+                let file_obj = $("input[type='file']")[0].files[0];
+                let form = new FormData();
+                form.append("img", file_obj);
+                form.append("csrfmiddlewaretoken", "{{ csrf_token }}");
+                $.ajax({
+                    url: "/upload_user_question_image_handle",
+                    type: "POST",
+                    data: form,
+                    processData: false, //告诉jquery不转换数据
+                    contentType: false, //告诉jquery不设置内容格式
+                    success: function (data) {
+                        $(".iqi_identify_content")[0].html(data["result_html"]);
+                        $(".iqi_identify_content")[1].html("习题ID" + data["match_id"] + ":" + data["result"]);
+                        $(".iqi_identify_content")[2].html("暂无解析");
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+
+
+<div class="total_container">
+    <div class="navigation_bar_container">
+        <a href="/index" class="navigation_bar_home_page">首页</a>
+        <ul class="navigation_login_register">
+            {% if user.is_authenticated %}
+                <li class="navigation_exit"><a href="/user/login_out">退出</a></li>
+                <li class="navigation_username"><a href="/user/user_center">欢迎您&nbsp;,&nbsp;{{ user.username }}</a></li>
+            {% else %}
+                <li class="navigation_register"><a href="/user/register">注册</a></li>
+                <li class="navigation_login"><a href="/user/login">登陆</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="logo_container">
+        <div class="logo_container_inner">
+            <img src="{% static "images/logo.png" %}" alt="logo" class="logo_img">
+            <!--<img src="images/Qr_code.jpg" class="Qr_code_img">-->
+        </div>
+    </div>
+    <div class="iq_guide_words_container">
+        <div class="iq_guide_words_container_inner">
+            <span>当前 : 图片识别</span>
+        </div>
+    </div>
+    <div class="iqi_user_upload_image_form_container">
+        <img src="{% static "images/uc_question_manage_icon.svg" %}" alt="用户上传的图片" id="user_question_image_show">
+        <div class="iqi_user_upload_image_form_container_inside">
+            <form action="/upload_user_question_image_handle" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="text" id="iqi_chosen_file_path" placeholder="请选择文件..." readonly="readonly"
+                       style="vertical-align: middle">
+                <input type="file" name="user_question_image" id="iqi_choose_file_btn">
+                <a href="javascript:void(0);" class="iqi_choose_file_a" id="iqi_choose_file_a">选择文件</a>
+                <input type="button" name="" id="iqi_submit" value="提交">
+            </form>
+        </div>
+        <div class="iqi_identify_container">
+            <div class="iqi_identify_title">
+                识别结果:
+            </div>
+            <div class="iqi_identify_content">
+                识别结果内容
+            </div>
+        </div>
+        <div class="iqi_identify_container">
+            <div class="iqi_identify_title">
+                匹配结果:
+            </div>
+            <div class="iqi_identify_content">
+                匹配结果内容
+            </div>
+        </div>
+        <div class="iqi_identify_container">
+            <div class="iqi_identify_title">
+                匹配解析:
+            </div>
+            <div class="iqi_identify_content">
+                匹配解析内容
+            </div>
+        </div>
+    </div>
+    <div class="footer_container">
+        <footer>
+            版权说明等内容
+        </footer>
+    </div>
+</div>
+
+</body>
+</html>
